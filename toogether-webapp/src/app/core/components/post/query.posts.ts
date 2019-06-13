@@ -9,10 +9,18 @@ export function getAllPosts() {
         postitle,
         postext
       }
-       {
-        id,
-        postid,
-        commentdata
-      }
     }`;
+}
+
+export function getAllComentsByPostId(postid: string) {
+
+  return gql`
+  query {
+    getAllComentsByPostId(postid: "${postid}") {
+      id,
+      postid,
+      username,
+      commentdata
+    }
+  }`;
 }

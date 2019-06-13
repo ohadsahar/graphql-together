@@ -11,19 +11,19 @@ export class PostGraphQlService {
 
   constructor(private apollo: Apollo) {}
   createPost(postData: PostClass) {
-
     return this.apollo.mutate<any>({mutation: mutation.createPost(postData)});
   }
   createCommentOfPost(commentData: CommentClass) {
     return this.apollo.mutate<any>({mutation: mutation.createComment(commentData)});
-
   }
-
   createRelationshipBetweenPostAndComments() {
     return this.apollo.mutate<any>({mutation: mutation.createRelationshipCommentToPost()});
   }
   getAllPost() {
     return this.apollo.watchQuery<any>({query: query.getAllPosts()}).valueChanges;
+  }
+  getPostCommentsById(postid: string){
+    return this.apollo.watchQuery<any>({query: query.getAllComentsByPostId(postid)}).valueChanges;
   }
 
 }

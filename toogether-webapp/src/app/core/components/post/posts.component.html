@@ -1,45 +1,50 @@
 <div class="posts-component">
-
-    <mat-card class="example-card">
-        <mat-card-header>
-          <div mat-card-avatar class="example-header-image"></div>
-          <mat-card-title>Add post</mat-card-title>
-          <mat-card-subtitle>long time no see</mat-card-subtitle>
-        </mat-card-header>
-        <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu">
-        <mat-card-content>
-            <form class="posts-add-form">
-                <mat-form-field class="full-width">
-                  <input matInput placeholder="Enter post title" name="postitle" value="" [(ngModel)]="post.postitle">
-                </mat-form-field>
-                <mat-form-field class="full-width">
-                  <input matInput placeholder="Enter post text" name="postext" value="" [(ngModel)]="post.postext">
-                </mat-form-field>
-                <button (click)="createNewPost()">Create post</button>
-              </form>
-        </mat-card-content>
-      </mat-card>
-</div>
+  <mat-card class="post-create-card">
+    <mat-card-header>
+      <div mat-card-avatar class="example-header-image"></div>
+      <mat-card-title>Add post</mat-card-title>
+      <mat-card-subtitle>long time no see</mat-card-subtitle>
+    </mat-card-header>
+    <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu">
+    <mat-card-content>
+      <form class="posts-add-form">
+        <mat-form-field class="full-width">
+          <input matInput placeholder="Enter post title" name="postitle" value="" [(ngModel)]="post.postitle">
+        </mat-form-field>
+        <mat-form-field class="full-width">
+          <input matInput placeholder="Enter post text" name="postext" value="" [(ngModel)]="post.postext">
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="createNewPost()">Create post</button>
+      </form>
+    </mat-card-content>
+  </mat-card>
 <div class="post-list">
   <h1>Post List</h1>
-    <div *ngFor="let post of posts">
-      <mat-card class="example-card">
-        <mat-card-header>
-          <div mat-card-avatar class="example-header-image"></div>
-          <mat-card-title>{{post?.postitle}}</mat-card-title>
-          <mat-card-subtitle>{{post?.username}}</mat-card-subtitle>
-        </mat-card-header>
-        <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu">
-        <mat-card-content>
-          {{post?.postext}}
-            <form class="posts-add-form">
-                <mat-form-field class="full-width">
-                  <input matInput placeholder="Enter comment" name="commentdata" value="" [(ngModel)]="comment.commentdata">
-                </mat-form-field>
-                <button (click)="createNewComment(post?.id)">Create comment</button>
-              </form>
-        </mat-card-content>
-      </mat-card>
-      </div>
+  <div *ngFor="let post of posts;let i = index">
+    <mat-card class="comment-card">
+      <mat-card-header>
+        <div mat-card-avatar class="example-header-image"></div>
+        <mat-card-title>{{post?.postitle}}</mat-card-title>
+        <mat-card-subtitle>{{post?.username}}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        {{post?.postext}}
+        <form class="posts-add-form">
+          <mat-form-field class="full-width">
+            <input matInput placeholder="Enter comment" name="commentdata" value="" [(ngModel)]="comment.commentdata">
+          </mat-form-field>
+          <button mat-raised-button color="primary" (click)="createNewComment(post?.id)">Create comment</button>
+          <button mat-raised-button color="primary" (click)="getCommentsByPostId(post?.id);showOrHideComments[i] = !showOrHideComments[i]">show
+            Comments</button>
+        </form>
+        <div class="comment-list" *ngIf="showOrHideComments[i]">
+          <div *ngFor="let comment of comments">
+            {{comment?.username}}
+            {{comment?.commentdata}}
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
 </div>
-
+</div>

@@ -1,18 +1,37 @@
+.posts-component {
+
+  margin: auto;
+  display: table;
+  font-family: 'Dosis', sans-serif;
+}
+
+/* Card section post*/
+.post-create-card {
+
+  max-width: 400px;
+}
+
 .posts-add-form {
   min-width: 150px;
   max-width: 500px;
   width: 100%;
 }
 
+.example-header-image {
+  background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+  background-size: cover;
+}
+
 .full-width {
   width: 100%;
 }
 
-.example-card {
-  max-width: 400px;
+.mat-raised-button:not([class*=mat-elevation-z]) {
+
+  margin-left: 10px;
 }
 
-.example-header-image {
-  background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
-  background-size: cover;
+.comment-card {
+  max-width: 400px;
+  font-family: 'Dosis', sans-serif;
 }
