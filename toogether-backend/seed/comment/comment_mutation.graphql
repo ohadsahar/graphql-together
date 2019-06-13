@@ -1,0 +1,8 @@
+type Mutation {
+
+    createComment(id: ID, postid: String!, username: String!, commentdata: String!): Comment
+   
+}
+
+
+
