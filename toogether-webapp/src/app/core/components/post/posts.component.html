@@ -34,8 +34,10 @@
             <input matInput placeholder="Enter comment" name="commentdata" value="" [(ngModel)]="comment.commentdata">
           </mat-form-field>
           <button mat-raised-button color="primary" (click)="createNewComment(post?.id)">Create comment</button>
-          <button mat-raised-button color="primary" (click)="getCommentsByPostId(post?.id);showOrHideComments[i] = !showOrHideComments[i]">show
+          <button mat-raised-button color="primary" *ngIf="!showOrHideComments[i]" (click)="getCommentsByPostId(post?.id);showOrHideComments[i] = !showOrHideComments[i]">show
             Comments</button>
+            <button mat-raised-button color="primary" *ngIf="showOrHideComments[i]" (click)="showOrHideComments[i] = !showOrHideComments[i]">hide
+                Comments</button>
         </form>
         <div class="comment-list" *ngIf="showOrHideComments[i]">
           <div *ngFor="let comment of comments">
