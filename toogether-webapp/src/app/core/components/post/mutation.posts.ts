@@ -2,6 +2,7 @@
 import gql from 'graphql-tag';
 import { PostClass } from 'src/app/shared/models/post.model';
 import { CommentClass } from 'src/app/shared/models/comment.model';
+import { SubCommentClass } from 'src/app/shared/models/subcomment.model';
 
 export function createPost(postData: PostClass) {
   return gql`
@@ -27,6 +28,27 @@ export function createComment(commentData: CommentClass) {
   }`;
 }
 
+export function createSubComment(subCommentData: SubCommentClass) {
+  return gql`
+    mutation {
+      createSubComment(commentid: "${subCommentData.commentid}",
+      username: "${subCommentData.username}", subcommentdata: "${subCommentData.subcommentdata}") {
+        id,
+        commentid,
+        username,
+        subcommentdata
+      }
+    }`;
+}
+
+export function createRelationshipSubCommentToComment() {
+  return gql`
+  mutation {
+    createSubCommentToCommentRelationship {
+      id
+    }
+  }`;
+}
 export function createRelationshipCommentToPost() {
   return gql`
     mutation {

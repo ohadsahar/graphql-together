@@ -1,0 +1,4 @@
+type Mutation {
+
+    createSubComment(id: ID, commentid: String!, username: String!, subcommentdata: String!): SubComment
+}

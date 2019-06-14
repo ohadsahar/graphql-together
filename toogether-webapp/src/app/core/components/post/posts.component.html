@@ -1,3 +1,5 @@
+<ng4-loading-spinner [threshold]="isLoading" [timeout]="99999" [loadingText]="'Please wait...'" [zIndex]="9999">
+</ng4-loading-spinner>
 <div class="posts-component">
   <mat-card class="post-create-card">
     <mat-card-header>
@@ -18,35 +20,73 @@
       </form>
     </mat-card-content>
   </mat-card>
-<div class="post-list">
-  <h1>Post List</h1>
-  <div *ngFor="let post of posts;let i = index">
-    <mat-card class="comment-card">
-      <mat-card-header>
-        <div mat-card-avatar class="example-header-image"></div>
-        <mat-card-title>{{post?.postitle}}</mat-card-title>
-        <mat-card-subtitle>{{post?.username}}</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        {{post?.postext}}
-        <form class="posts-add-form">
-          <mat-form-field class="full-width">
-            <input matInput placeholder="Enter comment" name="commentdata" value="" [(ngModel)]="comment.commentdata">
-          </mat-form-field>
-          <button mat-raised-button color="primary" (click)="createNewComment(post?.id)">Create comment</button>
-          <button mat-raised-button color="primary" *ngIf="!showOrHideComments[i]" (click)="getCommentsByPostId(post?.id);showOrHideComments[i] = !showOrHideComments[i]">show
-            Comments</button>
-            <button mat-raised-button color="primary" *ngIf="showOrHideComments[i]" (click)="showOrHideComments[i] = !showOrHideComments[i]">hide
-                Comments</button>
-        </form>
-        <div class="comment-list" *ngIf="showOrHideComments[i]">
-          <div *ngFor="let comment of comments">
-            {{comment?.username}}
-            {{comment?.commentdata}}
+  <div class="post-list">
+    <h1>Post List</h1>
+    <div *ngFor="let post of posts;let i = index">
+      <mat-card class="comment-card">
+        <mat-card-header>
+          <div mat-card-avatar class="example-header-image"></div>
+          <mat-card-title>{{post?.postitle}}</mat-card-title>
+          <mat-card-subtitle>{{post?.username}}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          {{post?.postext}}
+          <form class="posts-add-form">
+            <mat-form-field class="full-width">
+              <input matInput placeholder="Enter comment" name="commentdata" value="" [(ngModel)]="comment.commentdata">
+            </mat-form-field>
+            <mat-action-row>
+              <p (click)="createNewComment(post?.id)">Create comment</p>
+              <p *ngIf="!showOrHideComments[i]"
+                (click)="getCommentsByPostId(post?.id);showOrHideComments[i] = !showOrHideComments[i]">show
+                Comments</p>
+              <p *ngIf="showOrHideComments[i]" (click)="showOrHideComments[i] = !showOrHideComments[i]">hide
+                Comments</p>
+            </mat-action-row>
+
+          </form>
+          <div class="comment-list" *ngIf="showOrHideComments[i]">
+            <mat-accordion multi="false">
+              <mat-expansion-panel *ngFor="let comment of comments;let j = index">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    {{comment?.username}}
+                  </mat-panel-title>
+                  <mat-panel-description>
+                    {{comment?.commentdata}}
+                  </mat-panel-description>
+                </mat-expansion-panel-header>
+                <ng-template matExpansionPanelContent>
+                  <mat-form-field>
+                    <input matInput type="text" name="subcommentdata" placeholder="Write something..."
+                      [(ngModel)]="subcomment.subcommentdata">
+                  </mat-form-field>
+                  <mat-action-row class="subcomment-row-action">
+                    <p (click)="createNewSubComment(comment.id)">comment</p>
+                    <p *ngIf="!showOrHideSubComments[j]"
+                      (click)="showSubComments(comment.id);showOrHideSubComments[j] = ! showOrHideSubComments[j]">show
+                      sub
+                      comments</p>
+                    <p *ngIf="showOrHideSubComments[j]"
+                      (click)="showSubComments(comment.id);showOrHideSubComments[j] = ! showOrHideSubComments[j]">hide
+                      sub
+                      comments</p>
+                  </mat-action-row>
+                  <div class="subcomments-list" *ngIf="subcomments.length > 0 && showOrHideSubComments[j]">
+                    <div *ngFor="let subcomment of subcomments">
+                      {{subcomment.subcommentdata}}
+                    </div>
+                  </div>
+                  <div class="subcomments-list" *ngIf="subcomments.length <= 0 && showOrHideSubComments[j]">
+                    No subcomments for this comment
+                  </div>
+                </ng-template>
+              </mat-expansion-panel>
+
+            </mat-accordion>
           </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
+        </mat-card-content>
+      </mat-card>
+    </div>
   </div>
-</div>
 </div>

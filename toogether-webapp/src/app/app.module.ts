@@ -5,7 +5,7 @@ import { Apollo, ApolloModule } from 'apollo-angular';
 import { HttpLink, HttpLinkModule } from 'apollo-angular-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { environment } from 'src/environments/environment';
-/* apollo imports */
+import { Ng4LoadingSpinnerModule } from 'ng4-loading-spinner';
 import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
@@ -37,7 +37,8 @@ import { PostsComponent } from './core/components/post/posts.component';
     HttpClientModule,
     AngularMaterialModules,
     BrowserAnimationsModule,
-    FormsModule
+    FormsModule,
+    Ng4LoadingSpinnerModule.forRoot()
 
   ],
   providers: [],

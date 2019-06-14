@@ -1,7 +1,10 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { PostClass } from '../../../shared/models/post.model';
+import { SubCommentClass } from '../../../shared/models/subcomment.model';
 import { PostGraphQlService } from '../../services/post-graphql.service';
 import { CommentClass } from './../../../shared/models/comment.model';
+import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
+import { load } from '@angular/core/src/render3';
 
 @Component({
   selector: 'app-posts',
@@ -10,44 +13,99 @@ import { CommentClass } from './../../../shared/models/comment.model';
   encapsulation: ViewEncapsulation.None
 })
 export class PostsComponent implements OnInit {
+  // define variables
+  public showOrHideComments: any = {};
+  public showOrHideSubComments: any = {};
+  public isLoading: boolean;
 
+  // using models for the order
   post = new PostClass(null, '', '', '');
   comment = new CommentClass(null, '', '', '');
-  public showOrHideComments: any = {};
+  subcomment = new SubCommentClass(null, '', '', '');
+
+  // array to keep the data from neo4j database
   public posts: PostClass[] = [];
   public comments: CommentClass[] = [];
-  constructor(private postGraphQlService: PostGraphQlService) {
+  public subcomments: SubCommentClass[] = [];
 
+  constructor(
+    private postGraphQlService: PostGraphQlService,
+    private spinnerService: Ng4LoadingSpinnerService
+  ) {
+    this.isLoading = false;
   }
 
   ngOnInit() {
     this.onLoadComponent();
   }
   onLoadComponent() {
-
+    this.loading();
+    this.spinnerService.show();
     this.postGraphQlService.getAllPost().subscribe(response => {
       this.posts = response.data.getAllPosts;
+      this.loaded();
     });
   }
   createNewPost() {
+    this.isLoading = true;
     this.post.username = 'Ohad sahar';
     this.postGraphQlService.createPost(this.post).subscribe(response => {
       this.posts.push(response.data.createPost);
+      this.isLoading = false;
     });
   }
   createNewComment(postid: string) {
+    this.isLoading = true;
     this.comment.postid = postid;
     this.comment.username = 'Noy ditchi';
-    this.postGraphQlService.createCommentOfPost(this.comment).subscribe(response => {
-      this.comments.push(response.data.createComment);
-      this.postGraphQlService.createRelationshipBetweenPostAndComments().subscribe(() => {
+    this.postGraphQlService
+      .createCommentOfPost(this.comment)
+      .subscribe(response => {
+        this.comments.push(response.data.createComment);
+        this.postGraphQlService
+          .createRelationshipBetweenPostAndComments()
+          .subscribe(() => {
+            this.isLoading = false;
+          });
       });
-    });
+  }
+  createNewSubComment(commentid: string) {
+    this.loading();
+    this.subcomment.commentid = commentid;
+    this.subcomment.username = 'idan sagron';
+    this.postGraphQlService
+      .createSubCommentOfComment(this.subcomment)
+      .subscribe(response => {
+        this.subcomments.push(response.data.createSubComment);
+        this.postGraphQlService
+          .createSubCommentToCommentRelationship()
+          .subscribe(() => {
+            this.loaded();
+          });
+      });
+  }
+  showSubComments(commentid: string) {
+    this.loading();
+    this.postGraphQlService
+      .getSubCommentsByCommentId(commentid)
+      .subscribe(response => {
+        this.subcomments = response.data.getSubCommentsByCommentID;
+        this.loaded();
+      });
   }
   getCommentsByPostId(postid: string) {
+    this.loading();
     this.postGraphQlService.getPostCommentsById(postid).subscribe(response => {
       this.comments = response.data.getAllComentsByPostId;
+      this.loaded();
     });
   }
-
+  loading() {
+    this.isLoading = true;
+    this.spinnerService.show();
+  }
+  loaded() {
+    this.isLoading = false;
+    this.spinnerService.hide();
+  }
 }

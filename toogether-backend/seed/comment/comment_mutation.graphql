@@ -1,7 +1,7 @@
 type Mutation {
 
     createComment(id: ID, postid: String!, username: String!, commentdata: String!): Comment
-   
+    createSubCommentToCommentRelationship: [Comment] @cypher(statement: "MATCH (c:Comment),(s:SubComment) WHERE c.id = s.commentid CREATE UNIQUE (c)-[r:HAS_SUBCOMMENT]->(s) return c;")
 }
 
 

@@ -3,6 +3,7 @@
   margin: auto;
   display: table;
   font-family: 'Dosis', sans-serif;
+  padding: 30px;
 }
 
 /* Card section post*/
@@ -25,10 +26,27 @@
 .full-width {
   width: 100%;
 }
+.mat-action-row {
 
-.mat-raised-button:not([class*=mat-elevation-z]) {
+  display: flex;
+  padding: 0px !important;
+  font-weight: bold;
+  color: royalblue;
+  justify-content: left !important;
+}
+.subcomment-row-action {
 
-  margin-left: 10px;
+  display: flex;
+  padding: 0px !important;
+  color: orange;
+  font-weight: 400;
+  justify-content: left !important;
+}
+
+.mat-action-row  p {
+
+  margin-left: 20px;
+
 }
 
 .comment-card {

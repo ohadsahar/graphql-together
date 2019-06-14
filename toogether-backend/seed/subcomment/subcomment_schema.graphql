@@ -1,0 +1,7 @@
+type SubComment {
+
+    id: ID
+    commentid: String!
+    username: String!
+    subcommentdata: String!
+}

@@ -1,0 +1,5 @@
+type Query {
+
+    getAllSubComments: [SubComment]
+    getSubCommentsByCommentID(commentid: String):[SubComment]
+}
