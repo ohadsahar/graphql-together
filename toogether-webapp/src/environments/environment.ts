@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  gql_node_host: 'http://localhost:4000/graphql'
+  gql_node_host: 'http://localhost:4000/graphql',
+  ws_gql_node_host: 'wss://http://localhost:4000'
 };
 
 /*

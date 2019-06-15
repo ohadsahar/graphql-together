@@ -7,28 +7,19 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import { environment } from 'src/environments/environment';
 import { Ng4LoadingSpinnerModule } from 'ng4-loading-spinner';
 import { AppRoutingModule } from './app-routing.module';
-
 import { AppComponent } from './app.component';
-
 import { AngularMaterialModules } from './modules/angular-material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { PostsComponent } from './core/components/post/posts.component';
 
-
-
-
-
-
-
-
-
+import { split } from 'apollo-link';
+import { WebSocketLink } from 'apollo-link-ws';
+import { getMainDefinition } from 'apollo-utilities';
+import { SubscriptionClient } from 'subscriptions-transport-ws';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    PostsComponent
-  ],
+  declarations: [AppComponent, PostsComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -39,16 +30,30 @@ import { PostsComponent } from './core/components/post/posts.component';
     BrowserAnimationsModule,
     FormsModule,
     Ng4LoadingSpinnerModule.forRoot()
-
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule {
   constructor(apollo: Apollo, httpLink: HttpLink) {
+
+    const http = httpLink.create({ uri: environment.gql_node_host});
+    const GRAPHQL_ENDPOINT = environment.ws_gql_node_host;
+    const client = new SubscriptionClient(GRAPHQL_ENDPOINT, {reconnect: true});
+    const clientLink = new WebSocketLink(client);
+    const link = split(
+      ({ query }) => {
+        const { kind, operation } = getMainDefinition(query);
+        return kind === 'OperationDefinition' && operation === 'subscription';
+      },
+      clientLink,
+      http
+    );
+
     apollo.create({
-      link: httpLink.create({ uri: environment.gql_node_host }),
+      link,
       cache: new InMemoryCache()
     });
+
   }
 }
