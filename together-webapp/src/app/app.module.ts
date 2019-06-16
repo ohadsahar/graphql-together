@@ -37,23 +37,29 @@ import { SubscriptionClient } from 'subscriptions-transport-ws';
 export class AppModule {
   constructor(apollo: Apollo, httpLink: HttpLink) {
 
-    const http = httpLink.create({ uri: environment.gql_node_host});
-    const GRAPHQL_ENDPOINT = 'ws://localhost:3000/graphql';
-    const client = new SubscriptionClient(GRAPHQL_ENDPOINT, {reconnect: true});
-    const clientLink = new WebSocketLink(client);
-    const link = split(
-      ({ query }) => {
-        const { kind, operation } = getMainDefinition(query);
-        return kind === 'OperationDefinition' && operation === 'subscription';
-      },
-      clientLink,
-      http
-    );
 
     apollo.create({
-      link,
+      link: httpLink.create({ uri: environment.gql_node_host }),
       cache: new InMemoryCache()
     });
+
+    // const http = httpLink.create({ uri: environment.gql_node_host});
+    // const GRAPHQL_ENDPOINT = 'ws://localhost:3000/graphql';
+    // const client = new SubscriptionClient(GRAPHQL_ENDPOINT, {reconnect: true});
+    // const clientLink = new WebSocketLink(client);
+    // const link = split(
+    //   ({ query }) => {
+    //     const { kind, operation } = getMainDefinition(query);
+    //     return kind === 'OperationDefinition' && operation === 'subscription';
+    //   },
+    //   clientLink,
+    //   http
+    // );
+
+    // apollo.create({
+    //   http,
+    //   cache: new InMemoryCache()
+    // });
 
   }
 }
