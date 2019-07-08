@@ -96,6 +96,7 @@ export class PostsComponent implements OnInit {
     this.loading();
     this.postGraphQlService.getPostCommentsById(postid).subscribe(response => {
       this.comments[i] = response.data.getAllComentsByPostId;
+      console.log(this.comments);
       this.loaded();
     });
   }
