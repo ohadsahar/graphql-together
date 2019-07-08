@@ -4,6 +4,7 @@ import { SubCommentClass } from '../../../shared/models/subcomment.model';
 import { PostGraphQlService } from '../../services/post-graphql.service';
 import { CommentClass } from './../../../shared/models/comment.model';
 import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-posts',
@@ -53,20 +54,21 @@ export class PostsComponent implements OnInit {
       this.isLoading = false;
     });
   }
-  createNewComment(postid: string) {
+  createNewComment(form: NgForm,i: number, postid: string) {
+
+    if (form.invalid) {
+      return;
+    }
     this.isLoading = true;
     this.comment.postid = postid;
     this.comment.username = 'Noy ditchi';
-    this.postGraphQlService
-      .createCommentOfPost(this.comment)
-      .subscribe(response => {
-        this.comments.push(response.data.createComment);
-        this.postGraphQlService
-          .createRelationshipBetweenPostAndComments()
-          .subscribe(() => {
-            this.isLoading = false;
-          });
+    this.comment.commentdata = form.value.commentdata;
+    this.postGraphQlService.createCommentOfPost(this.comment).subscribe(response => {
+      this.comments.push(response.data.createComment);
+      this.postGraphQlService.createRelationshipBetweenPostAndComments().subscribe(() => {
+        this.loaded();
       });
+    });
   }
   createNewSubComment(commentid: string) {
     this.loading();
@@ -96,7 +98,6 @@ export class PostsComponent implements OnInit {
     this.loading();
     this.postGraphQlService.getPostCommentsById(postid).subscribe(response => {
       this.comments[i] = response.data.getAllComentsByPostId;
-      console.log(this.comments);
       this.loaded();
     });
   }

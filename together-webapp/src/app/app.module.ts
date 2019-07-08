@@ -19,9 +19,10 @@ import { getMainDefinition } from 'apollo-utilities';
 import { SubscriptionClient } from 'subscriptions-transport-ws';
 import { NewsComponent } from './core/components/news/news.component';
 import { HitsComponent } from './core/components/hits/hits.component';
+import { MenuComponent } from './core/components/menu/menu.component';
 
 @NgModule({
-  declarations: [AppComponent, PostsComponent, NewsComponent, HitsComponent],
+  declarations: [AppComponent, PostsComponent, NewsComponent, HitsComponent, MenuComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

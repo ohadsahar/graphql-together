@@ -31,12 +31,12 @@
         </mat-card-header>
         <mat-card-content>
           {{post?.postext}}
-          <form class="posts-add-form">
+          <form class="posts-add-form" #commentForm="ngForm" (submit)="createNewComment(commentForm,i , post?.id)" >
             <mat-form-field class="full-width">
-              <input matInput placeholder="Enter comment" name="commentdata" value="" [(ngModel)]="comment.commentdata">
+              <input matInput placeholder="Enter comment" name="commentdata" value="" name="commentdata" ngModel #commentdata="ngModel" required>
             </mat-form-field>
             <mat-action-row>
-              <p (click)="createNewComment(post?.id)">Create comment</p>
+              <button mat-raised-button type="submit" >Create comment</button>
               <p *ngIf="!showOrHideComments[i]"
                 (click)="getCommentsByPostId(post?.id, i);showOrHideComments[i] = !showOrHideComments[i]">show
                 Comments</p>
