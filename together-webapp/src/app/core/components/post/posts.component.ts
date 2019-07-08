@@ -4,7 +4,6 @@ import { SubCommentClass } from '../../../shared/models/subcomment.model';
 import { PostGraphQlService } from '../../services/post-graphql.service';
 import { CommentClass } from './../../../shared/models/comment.model';
 import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
-import { load } from '@angular/core/src/render3';
 
 @Component({
   selector: 'app-posts',
@@ -93,10 +92,10 @@ export class PostsComponent implements OnInit {
         this.loaded();
       });
   }
-  getCommentsByPostId(postid: string) {
+  getCommentsByPostId(postid: string, i: number) {
     this.loading();
     this.postGraphQlService.getPostCommentsById(postid).subscribe(response => {
-      this.comments = response.data.getAllComentsByPostId;
+      this.comments[i] = response.data.getAllComentsByPostId;
       this.loaded();
     });
   }

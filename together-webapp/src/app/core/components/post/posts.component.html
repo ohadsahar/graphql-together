@@ -38,16 +38,16 @@
             <mat-action-row>
               <p (click)="createNewComment(post?.id)">Create comment</p>
               <p *ngIf="!showOrHideComments[i]"
-                (click)="getCommentsByPostId(post?.id);showOrHideComments[i] = !showOrHideComments[i]">show
+                (click)="getCommentsByPostId(post?.id, i);showOrHideComments[i] = !showOrHideComments[i]">show
                 Comments</p>
               <p *ngIf="showOrHideComments[i]" (click)="showOrHideComments[i] = !showOrHideComments[i]">hide
                 Comments</p>
             </mat-action-row>
-
           </form>
           <div class="comment-list" *ngIf="showOrHideComments[i]">
             <mat-accordion multi="false">
-              <mat-expansion-panel *ngFor="let comment of comments;let j = index">
+              <mat-expansion-panel *ngFor="let comment of comments[i];let j = index">
+
                 <mat-expansion-panel-header>
                   <mat-panel-title>
                     {{comment?.username}}

@@ -4,10 +4,7 @@ import { PostClass } from 'src/app/shared/models/post.model';
 import { CommentClass } from 'src/app/shared/models/comment.model';
 import { SubCommentClass } from 'src/app/shared/models/subcomment.model';
 
-
-
 export function createPost(postData: PostClass) {
-
   return gql`
   mutation {
     createPost(username: "${postData.username}", postitle: "${postData.postitle}", postext: "${postData.postext}") {
@@ -18,8 +15,6 @@ export function createPost(postData: PostClass) {
     }
   }`;
 }
-
-
 export function createComment(commentData: CommentClass) {
   return gql`
   mutation {
@@ -31,7 +26,6 @@ export function createComment(commentData: CommentClass) {
     }
   }`;
 }
-
 export function createSubComment(subCommentData: SubCommentClass) {
   return gql`
     mutation {
@@ -44,7 +38,6 @@ export function createSubComment(subCommentData: SubCommentClass) {
       }
     }`;
 }
-
 export function createRelationshipSubCommentToComment() {
   return gql`
   mutation {

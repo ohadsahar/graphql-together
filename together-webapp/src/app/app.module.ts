@@ -17,9 +17,11 @@ import { split } from 'apollo-link';
 import { WebSocketLink } from 'apollo-link-ws';
 import { getMainDefinition } from 'apollo-utilities';
 import { SubscriptionClient } from 'subscriptions-transport-ws';
+import { NewsComponent } from './core/components/news/news.component';
+import { HitsComponent } from './core/components/hits/hits.component';
 
 @NgModule({
-  declarations: [AppComponent, PostsComponent],
+  declarations: [AppComponent, PostsComponent, NewsComponent, HitsComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
