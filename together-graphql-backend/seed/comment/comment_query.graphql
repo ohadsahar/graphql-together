@@ -1,5 +1,5 @@
 type Query {
 
     getAllComments:[Comment]
-    getAllComentsByPostId(postid: String):[Comment]
+    getAllComentsByPostId(first: Int, offset: Int, postid: String):[Comment]
 }

@@ -1,5 +1,4 @@
 import gql from 'graphql-tag';
-
 export function getAllPosts() {
   return gql`
     query {
@@ -12,7 +11,6 @@ export function getAllPosts() {
     }
   `;
 }
-
 export function getSubCommentsByCommentID(commentid: string) {
   return gql`
     query {
@@ -24,11 +22,10 @@ export function getSubCommentsByCommentID(commentid: string) {
       }
     }`;
 }
-
-export function getAllComentsByPostId(postid: string) {
+export function getAllComentsByPostId(first: number, offset: number, postid: string) {
   return gql`
   query {
-    getAllComentsByPostId(postid: "${postid}") {
+    getAllComentsByPostId(first:${first},offset:${offset}, postid:"${postid}") {
       id,
       postid,
       username,

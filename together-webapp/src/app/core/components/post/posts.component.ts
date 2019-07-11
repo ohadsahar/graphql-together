@@ -54,17 +54,16 @@ export class PostsComponent implements OnInit {
       this.isLoading = false;
     });
   }
-  createNewComment(form: NgForm,i: number, postid: string) {
+  createNewComment(form: NgForm, i: number, postid: string) {
 
     if (form.invalid) {
       return;
     }
     this.isLoading = true;
     this.comment.postid = postid;
-    this.comment.username = 'Noy ditchi';
+    this.comment.username = 'shalom hanoh';
     this.comment.commentdata = form.value.commentdata;
     this.postGraphQlService.createCommentOfPost(this.comment).subscribe(response => {
-      this.comments.push(response.data.createComment);
       this.postGraphQlService.createRelationshipBetweenPostAndComments().subscribe(() => {
         this.loaded();
       });
@@ -96,7 +95,8 @@ export class PostsComponent implements OnInit {
   }
   getCommentsByPostId(postid: string, i: number) {
     this.loading();
-    this.postGraphQlService.getPostCommentsById(postid).subscribe(response => {
+    console.log(postid);
+    this.postGraphQlService.getPostCommentsById(5, 0, postid).subscribe(response => {
       this.comments[i] = response.data.getAllComentsByPostId;
       this.loaded();
     });
