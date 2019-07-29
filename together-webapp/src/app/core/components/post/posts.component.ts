@@ -1,10 +1,11 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
 import { PostClass } from '../../../shared/models/post.model';
 import { SubCommentClass } from '../../../shared/models/subcomment.model';
 import { PostGraphQlService } from '../../services/post-graphql.service';
 import { CommentClass } from './../../../shared/models/comment.model';
-import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
-import { NgForm } from '@angular/forms';
+import { WebSocketService } from './../../services/web-socket.service';
 
 @Component({
   selector: 'app-posts',
@@ -13,30 +14,26 @@ import { NgForm } from '@angular/forms';
   encapsulation: ViewEncapsulation.None
 })
 export class PostsComponent implements OnInit {
-  // define variables
   public showOrHideComments: any = {};
   public showOrHideSubComments: any = {};
   public isLoading: boolean;
-
-  // using models for the order
+  currentPost: number;
   post = new PostClass(null, '', '', '');
   comment = new CommentClass(null, '', '', '');
   subcomment = new SubCommentClass(null, '', '', '');
-
-  // array to keep the data from neo4j database
   public posts: PostClass[] = [];
-  public comments: CommentClass[] = [];
+  public comments: any[] = [];
   public subcomments: SubCommentClass[] = [];
 
-  constructor(
-    private postGraphQlService: PostGraphQlService,
-    private spinnerService: Ng4LoadingSpinnerService
+  constructor(private postGraphQlService: PostGraphQlService, private spinnerService: Ng4LoadingSpinnerService,
+              private webSocketService: WebSocketService
   ) {
     this.isLoading = false;
   }
 
   ngOnInit() {
     this.onLoadComponent();
+    this.startSocketing();
   }
   onLoadComponent() {
     this.loading();
@@ -46,24 +43,40 @@ export class PostsComponent implements OnInit {
       this.loaded();
     });
   }
+  startSocketing() {
+    this.webSocketService.listen('post created').subscribe((postData) => {
+      this.posts.push(postData.message.post);
+    });
+    this.webSocketService.listen('new comment').subscribe((commentData) => {
+      if (this.comments[this.currentPost]) {
+        this.comments[this.currentPost] = this.comments[this.currentPost].concat(commentData.message.comment);
+      }
+    });
+    this.webSocketService.listen('sub comment created').subscribe((subcommentData) => {
+      this.subcomments.push(subcommentData.message.subcomment);
+    });
+  }
   createNewPost() {
     this.isLoading = true;
     this.post.username = 'Ohad sahar';
     this.postGraphQlService.createPost(this.post).subscribe(response => {
-      this.posts.push(response.data.createPost);
+      const data = { post: this.post };
+      this.webSocketService.emit('create post', data);
       this.isLoading = false;
     });
   }
   createNewComment(form: NgForm, i: number, postid: string) {
-
     if (form.invalid) {
       return;
     }
+    this.currentPost = i;
     this.isLoading = true;
     this.comment.postid = postid;
     this.comment.username = 'shalom hanoh';
     this.comment.commentdata = form.value.commentdata;
     this.postGraphQlService.createCommentOfPost(this.comment).subscribe(response => {
+      const data = { comment: response.data.createComment };
+      this.webSocketService.emit('create-comment', data);
       this.postGraphQlService.createRelationshipBetweenPostAndComments().subscribe(() => {
         this.loaded();
       });
@@ -73,31 +86,26 @@ export class PostsComponent implements OnInit {
     this.loading();
     this.subcomment.commentid = commentid;
     this.subcomment.username = 'idan sagron';
-    this.postGraphQlService
-      .createSubCommentOfComment(this.subcomment)
-      .subscribe(response => {
-        this.subcomments.push(response.data.createSubComment);
-        this.postGraphQlService
-          .createSubCommentToCommentRelationship()
-          .subscribe(() => {
-            this.loaded();
-          });
+    this.postGraphQlService.createSubCommentOfComment(this.subcomment).subscribe(response => {
+      const data = { subcomment: response.data.createSubComment };
+      this.webSocketService.emit('create-sub-comment', data);
+      this.postGraphQlService.createSubCommentToCommentRelationship().subscribe(() => {
+        this.loaded();
       });
+    });
   }
   showSubComments(commentid: string) {
     this.loading();
-    this.postGraphQlService
-      .getSubCommentsByCommentId(commentid)
-      .subscribe(response => {
-        this.subcomments = response.data.getSubCommentsByCommentID;
-        this.loaded();
-      });
+    this.postGraphQlService.getSubCommentsByCommentId(commentid).subscribe(response => {
+      this.subcomments = response.data.getSubCommentsByCommentID;
+      this.loaded();
+    });
   }
   getCommentsByPostId(postid: string, i: number) {
     this.loading();
-    console.log(postid);
-    this.postGraphQlService.getPostCommentsById(5, 0, postid).subscribe(response => {
-      this.comments[i] = response.data.getAllComentsByPostId;
+    this.currentPost = i;
+    this.postGraphQlService.getPostCommentsById(postid).subscribe(response => {
+      this.comments[this.currentPost] = response.data.getAllComentsByPostId;
       this.loaded();
     });
   }

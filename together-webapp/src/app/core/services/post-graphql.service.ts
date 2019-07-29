@@ -28,8 +28,8 @@ export class PostGraphQlService {
   getAllPost() {
     return this.apollo.watchQuery<any>({query: query.getAllPosts()}).valueChanges;
   }
-  getPostCommentsById(first: number, offset: number, postid: string){
-    return this.apollo.watchQuery<any>({query: query.getAllComentsByPostId(first, offset, postid)}).valueChanges;
+  getPostCommentsById(postid: string){
+    return this.apollo.watchQuery<any>({query: query.getAllComentsByPostId(postid)}).valueChanges;
   }
   getSubCommentsByCommentId(commentid: string) {
     return this.apollo.watchQuery<any>({query: query.getSubCommentsByCommentID(commentid)}).valueChanges;

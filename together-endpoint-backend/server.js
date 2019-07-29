@@ -1,31 +1,36 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const postRoute = require('./routes/post');
-// returing us an express app
-const config = require('./utils/config');
-const app = express();
+const app = require('express')();
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
 const PORT = process.env.PORT || 3001;
-const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development';
 
-// writing to our database in the mongodb and is name:first
+function connect() {
+  server.listen(PORT, () => {
+    console.log(`Socket io is now live on port ${PORT}`);
+  });
+}
 
-app.use(bodyParser.json({
-  limit: '15mb',
-  extended: true,
-}));
-
-app.use(bodyParser.urlencoded({
-  limit: '15mb',
-  extended: true,
-}));
-
-console.log(`app: Setting up cors with options ${JSON.stringify(config[env].cors)}`);
-app.use(cors(config[env].cors));
-app.use('/admin/posts', postRoute);
-app.listen(PORT, () => {
-  console.log(`connected to server on PORT ${PORT}`);
+io.on('connection', function (socket) {
+  // socket.on('join-posts', function (data) {
+  //     socket.join(data.room);
+  //     socket.broadcast.to(data.room).emit('new user joined');
+  // });
+  socket.on('create-comment', function (data) {
+    io.emit('new comment', {
+      message: data
+    });
+  });
+  socket.on('create post', function (data) {
+    io.emit('post created', {
+      message: data
+    });
+  });
+  socket.on('create-sub-comment', function (data) {
+    io.emit('sub comment created', {
+      message: data
+    });
+  });
 });
 
-
-module.exports = app;
+module.exports = {
+  connect,
+}

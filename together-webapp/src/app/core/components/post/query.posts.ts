@@ -22,10 +22,10 @@ export function getSubCommentsByCommentID(commentid: string) {
       }
     }`;
 }
-export function getAllComentsByPostId(first: number, offset: number, postid: string) {
+export function getAllComentsByPostId(postid: string) {
   return gql`
   query {
-    getAllComentsByPostId(first:${first},offset:${offset}, postid:"${postid}") {
+    getAllComentsByPostId(postid:"${postid}") {
       id,
       postid,
       username,

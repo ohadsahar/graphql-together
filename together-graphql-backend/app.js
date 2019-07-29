@@ -5,7 +5,7 @@ const { v1 } = require('neo4j-driver');
 const chalk = require('chalk');
 const config = require('./utils/config');
 const mergedSchema = require('./utils/schema.util');
-
+const ioServer = require('../together-endpoint-backend/server');
 const PORT = process.env.PORT || 4000;
 const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development';
 
@@ -18,7 +18,7 @@ const driver = v1.driver(
 );
 
 const isDev = process.env.NODE_ENV !== 'production';
-
+ioServer.connect();
 const server = new ApolloServer({
   schema: mergedSchema,
   context: ({ req }) => ({
