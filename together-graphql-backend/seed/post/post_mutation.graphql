@@ -1,5 +1,5 @@
 type Mutation {
-
-    createPost(id: ID, username: String!,postitle: String!, postext: String!) : Post
+    createPost(id: ID, username: String!,postitle: String!, postext: String!, likes: Int!) : Post
+    updatePost(id: ID, username: String!, postitle: String!, postext: String!, likes: Int!): Post
     createReleationCommentToPost: [Post] @cypher(statement: "MATCH (p:Post),(c:Comment) WHERE p.id = c.postid CREATE UNIQUE (p)-[r:HAS_COMMENT]->(c) return p;")
 }  

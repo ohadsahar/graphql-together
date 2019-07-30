@@ -44,15 +44,20 @@
             <mat-action-row>
               <button mat-raised-button type="submit" style="margin-right: 3%">Create comment</button>
               <button type="button" mat-raised-button *ngIf="!showOrHideComments[i]"
-                (click)="getCommentsByPostId(post?.id, i);showOrHideComments[i] = !showOrHideComments[i]">show Comments</button>
+                (click)="getCommentsByPostId(post?.id, i);showOrHideComments[i] = !showOrHideComments[i]">show
+                Comments</button>
               <button type="button" mat-raised-button *ngIf="showOrHideComments[i]"
                 (click)="showOrHideComments[i] = !showOrHideComments[i];resetComments()">hide Comments</button>
+                <p>{{post?.likes}} <i class="far fa-thumbs-up" (click)="likePost(post, i)"></i> </p>
+                <i class="far fa-thumbs-down" (click)="dissLikePost(post, i)"></i>
             </mat-action-row>
           </form>
           <section class="comment-list" *ngIf="showOrHideComments[i]">
             <h1>Comments</h1>
             <mat-accordion multi="false">
-              <mat-expansion-panel (expandedChange)="changePanel(post?.id);showOrHideComments[i] = showOrHideComments[i]" *ngFor="let comment of comments[i];let j = index">
+              <mat-expansion-panel
+                (expandedChange)="changePanel(post?.id);showOrHideComments[i] = showOrHideComments[i]"
+                *ngFor="let comment of comments[i];let j = index">
                 <mat-expansion-panel-header>
                   <mat-panel-title>
                     {{comment?.username}}
@@ -90,9 +95,8 @@
                         </mat-expansion-panel-header>
                         <ng-template matExpansionPanelContent>
                           <mat-form-field>
-                            <input matInput type="text" name="subcommentdata"
-                              [(ngModel)]="subcomment.subcommentdata">
-                              <mat-placeholder class="place-holder">Write something...</mat-placeholder>
+                            <input matInput type="text" name="subcommentdata" [(ngModel)]="subcomment.subcommentdata">
+                            <mat-placeholder class="place-holder">Write something...</mat-placeholder>
                           </mat-form-field>
                           <section class="sub-comment-buttons">
                             <mat-action-row>

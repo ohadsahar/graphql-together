@@ -1,0 +1,21 @@
+.toogether-chat {
+  background-color: #003459;
+  height: 80vh;
+  padding: 20px;
+  border-radius: 5px 5px 5px 5px;
+  margin-bottom: 3%;
+  overflow-y: scroll;
+}
+
+.full-width {
+  width: 100%;
+  color: white;
+}
+
+.toogether-chat h1 {
+  color: white;
+}
+
+.messages-chat {
+  color: white;
+}

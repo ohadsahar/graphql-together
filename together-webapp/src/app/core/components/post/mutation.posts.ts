@@ -1,4 +1,3 @@
-
 import gql from 'graphql-tag';
 import { PostClass } from 'src/app/shared/models/post.model';
 import { CommentClass } from 'src/app/shared/models/comment.model';
@@ -7,11 +6,13 @@ import { SubCommentClass } from 'src/app/shared/models/subcomment.model';
 export function createPost(postData: PostClass) {
   return gql`
   mutation {
-    createPost(username: "${postData.username}", postitle: "${postData.postitle}", postext: "${postData.postext}") {
+    createPost(username: "${postData.username}", postitle: "${postData.postitle}", postext: "${postData.postext}",
+    likes: ${postData.likes}) {
       id,
       username,
       postitle,
-      postext
+      postext,
+      likes
     }
   }`;
 }
@@ -53,4 +54,17 @@ export function createRelationshipCommentToPost() {
         id
       }
     }`;
+}
+export function updatePost(postData: PostClass) {
+  return gql`
+  mutation {
+    updatePost(id: "${postData.id}",username: "${postData.username}", postitle: "${postData.postitle}", postext: "${postData.postext}",
+    likes: ${postData.likes}) {
+      id,
+      username,
+      postitle,
+      postext,
+      likes
+    }
+}`;
 }

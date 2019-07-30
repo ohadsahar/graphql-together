@@ -30,6 +30,17 @@ io.on('connection', function (socket) {
       message: data
     });
   });
+  socket.on('like-post', function (data) {
+    io.emit('liked-post', {
+      message: data
+    });
+  });
+  socket.on('send-lobby-message', function (data) {
+    console.log(data);
+    io.emit('new-lobby-message', {
+      message: data
+    });
+  });
 });
 
 module.exports = {

@@ -18,7 +18,7 @@ export class PostsComponent implements OnInit {
   public showOrHideComments: any = {};
   public showOrHideSubComments: any = {};
   public isLoading: boolean;
-  post = new PostClass(null, '', '', '');
+  post = new PostClass(null, '', '', '', 0);
   comment = new CommentClass(null, '', '', '');
   subcomment = new SubCommentClass(null, '', '', '');
   fetchCommentData: FetchCommentsInterface;
@@ -35,7 +35,7 @@ export class PostsComponent implements OnInit {
   skipSubComment: number;
 
   constructor(private postGraphQlService: PostGraphQlService, private spinnerService: Ng4LoadingSpinnerService,
-    private webSocketService: WebSocketService
+              private webSocketService: WebSocketService
   ) {
     this.isLoading = false;
     this.skip = 0;
@@ -60,13 +60,16 @@ export class PostsComponent implements OnInit {
     this.webSocketService.listen('post created').subscribe((postData) => {
       this.posts.push(postData.message.post);
     });
+    this.webSocketService.listen('sub comment created').subscribe((subcommentData) => {
+      this.subcomments.push(subcommentData.message.subcomment);
+    });
+    this.webSocketService.listen('liked-post').subscribe((postLikedData) => {
+      this.posts[this.currentPost] = postLikedData.message.post;
+    })
     this.webSocketService.listen('new comment').subscribe((commentData) => {
       if (this.comments[this.currentPost]) {
         this.comments[this.currentPost] = this.comments[this.currentPost].concat(commentData.message.comment);
       }
-    });
-    this.webSocketService.listen('sub comment created').subscribe((subcommentData) => {
-      this.subcomments.push(subcommentData.message.subcomment);
     });
   }
   createNewPost() {
@@ -112,6 +115,7 @@ export class PostsComponent implements OnInit {
     this.currentCommentid = commentid;
     this.fetchSubCommentData = { limit: this.limitSubComment, skip: this.skipSubComment, postid: commentid };
     this.postGraphQlService.getSubCommentsByCommentId(this.fetchSubCommentData).subscribe(response => {
+
       if (this.subcomments) {
         this.subcomments = this.subcomments.concat(response.data.getSubCommentsByCommentID);
       } else {
@@ -157,6 +161,28 @@ export class PostsComponent implements OnInit {
   changePanel(postid: string) {
     this.resetSubComments();
     this.showSubComments(postid);
+  }
+  likePost(postData: PostClass, index: number) {
+    this.loading();
+    this.spinnerService.show();
+    this.currentPost = index;
+    postData.likes += 1;
+    this.postGraphQlService.updatePost(postData).subscribe(response => {
+      const data = { post: response.data.updatePost };
+      this.webSocketService.emit('like-post', data);
+      this.posts[index] = response.data.updatePost;
+    });
+  }
+  dissLikePost(postData: PostClass, index: number) {
+    this.loading();
+    this.spinnerService.show();
+    this.currentPost = index;
+    postData.likes -= 1;
+    this.postGraphQlService.updatePost(postData).subscribe(response => {
+      const data = { post: response.data.updatePost };
+      this.webSocketService.emit('like-post', data);
+      this.posts[index] = response.data.updatePost;
+    });
   }
   loading() {
     this.isLoading = true;

@@ -26,10 +26,13 @@ export class PostGraphQlService {
   createRelationshipBetweenPostAndComments() {
     return this.apollo.mutate<any>({mutation: mutation.createRelationshipCommentToPost()});
   }
+  updatePost(postData: PostClass) {
+    return this.apollo.mutate<any>({mutation: mutation.updatePost(postData)});
+  }
   getAllPost() {
     return this.apollo.watchQuery<any>({query: query.getAllPosts()}).valueChanges;
   }
-  getPostCommentsById(fetchComment: FetchCommentsInterface){
+  getPostCommentsById(fetchComment: FetchCommentsInterface) {
     return this.apollo.watchQuery<any>({query: query.getAllComentsByPostId(fetchComment)}).valueChanges;
   }
   getSubCommentsByCommentId(fetchSubCommentData: FetchCommentsInterface) {

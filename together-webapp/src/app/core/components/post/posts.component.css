@@ -8,6 +8,10 @@ body {
 .post-create-card {
   max-width: 400px;
   background-color: #003459;
+  padding: 45px;
+}
+.posts-component .mat-card {
+  padding: 35px;
 }
 
 .posts-add-form {
@@ -72,6 +76,12 @@ h1 {
 .show-more {
   color: white;
   text-align: center;
-  marign-top: 3% !important;
   margin-top: 3%;
 }
+
+.fa-thumbs-up, .fa-thumbs-down {
+  margin-left: 3%;
+  color: white;
+  cursor: pointer;
+}
+

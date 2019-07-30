@@ -1,4 +1,0 @@
-type Subscription {
-
-    createPost(id: ID, username: String!,postitle: String!, postext: String!) : Post
-}

@@ -5,6 +5,7 @@ html * {
 html,
 body {
   height: 100%;
+  padding: 30px;
 }
 
 body {
@@ -48,10 +49,13 @@ body {
 .posts-component {
   margin: auto;
   display: table;
-  padding: 20px;
 }
+
 .mat-tab-labels {
-  background-color: white;
+  background-color: #FFFFFF;
+  -webkit-box-shadow:0 0 10px rgba(0, 0, 0, 0.5);
+	-moz-box-shadow:0 0 10px rgba(0, 0, 0, 0.5);
+	box-shadow:0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 ::-webkit-scrollbar {

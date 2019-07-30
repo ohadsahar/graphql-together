@@ -14,10 +14,11 @@ import { PostsComponent } from './core/components/post/posts.component';
 import { NewsComponent } from './core/components/news/news.component';
 import { HitsComponent } from './core/components/hits/hits.component';
 import { MenuComponent } from './core/components/menu/menu.component';
+import { ChatComponent } from './core/components/chat/chat.component';
 
 
 @NgModule({
-  declarations: [AppComponent, PostsComponent, NewsComponent, HitsComponent, MenuComponent],
+  declarations: [AppComponent, PostsComponent, NewsComponent, HitsComponent, MenuComponent, ChatComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

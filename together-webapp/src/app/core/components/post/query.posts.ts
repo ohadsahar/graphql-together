@@ -7,7 +7,8 @@ export function getAllPosts() {
         id
         username
         postitle
-        postext
+        postext,
+        likes
       }
     }
   `;
@@ -35,5 +36,3 @@ export function getAllComentsByPostId(fetchComment: FetchCommentsInterface) {
     }
   }`;
 }
-
-
