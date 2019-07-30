@@ -1,42 +1,77 @@
-.posts-component {
-  margin: auto;
-  display: table;
-  padding: 20px;
+/* Global css */
+
+/* Global css */
+body {
+  background-color: #F7F7F7;
 }
 /* Card section post*/
 .post-create-card {
   max-width: 400px;
+  background-color: #003459;
 }
+
 .posts-add-form {
   min-width: 150px;
   max-width: 500px;
   width: 100%;
 }
+
+.post-card-title {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.post-card-sub-title {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* Card section post*/
 .example-header-image {
   background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
   background-size: cover;
 }
+
 .full-width {
   width: 100%;
 }
-.mat-action-row {
-  display: flex;
-  padding: 0px !important;
-  font-weight: bold;
-  color: royalblue;
-  justify-content: left !important;
-}
-.subcomment-row-action {
-  display: flex;
-  padding: 0px !important;
-  color: orange;
-  font-weight: 400;
-  justify-content: left !important;
-}
 
-.mat-action-row  p {
-  margin-left: 20px;
-}
 .comment-card {
   max-width: 400px;
+  background-color: #003459;
+}
+
+.mat-expansion-panel {
+  font-weight: bold;
+}
+
+.mat-expansion-panel-header {
+  font-weight: bold;
+  background-color: #95bbd561;
+}
+
+.mat-expansion-panel-header-description,
+.mat-expansion-panel-header-title {
+  color: black;
+}
+
+.mat-expansion-panel-body {
+  background-color: #003459;
+}
+
+.no-data-sub-comment {
+  color: white;
+}
+
+h1 {
+  color: black;
+}
+.subcomments-list, .comment-list h1 {
+  color: white;
+}
+.show-more {
+  color: white;
+  text-align: center;
+  marign-top: 3% !important;
+  margin-top: 3%;
 }

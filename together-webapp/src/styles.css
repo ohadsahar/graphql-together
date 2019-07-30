@@ -1,13 +1,71 @@
-/* You can add global styles to this file, and also import other style files */
+html * {
+  font-family: 'Rajdhani', sans-serif;
+}
 
 html,
 body {
   height: 100%;
-  font-family: 'Rajdhani', sans-serif !important;
 }
 
 body {
   margin: 0;
   overflow-x: hidden;
+}
 
+.mat-action-row {
+  display: block !important;
+  padding: 0px;
+  font-weight: bold;
+  color: royalblue;
+  justify-content: center !important;
+}
+
+.place-holder {
+  font-weight: bold;
+  color: white;
+}
+
+.mat-raised-button {
+  font-weight: bold;
+}
+
+.mat-card-content {
+  font-size: 19px;
+  font-weight: bold;
+  color: white;
+}
+
+.mat-card-header {
+  color: white;
+  font-weight: bold;
+}
+
+.mat-card-subtitle {
+  color: white;
+  font-weight: bold;
+}
+
+.posts-component {
+  margin: auto;
+  display: table;
+  padding: 20px;
+}
+.mat-tab-labels {
+  background-color: white;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }

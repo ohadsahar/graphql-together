@@ -149,11 +149,14 @@ export class PostsComponent implements OnInit {
     this.skip = 0;
     this.limit = 5;
   }
-
   resetSubComments() {
     this.subcomments = [];
     this.limitSubComment = 5;
     this.skipSubComment = 0;
+  }
+  changePanel(postid: string) {
+    this.resetSubComments();
+    this.showSubComments(postid);
   }
   loading() {
     this.isLoading = true;
