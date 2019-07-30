@@ -1,5 +1,5 @@
 type Query {
 
     getAllSubComments: [SubComment]
-    getSubCommentsByCommentID(commentid: String):[SubComment]
+    getSubCommentsByCommentID(first: Int, offset: Int,commentid: String):[SubComment]
 }

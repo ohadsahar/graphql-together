@@ -14,13 +14,14 @@ io.on('connection', function (socket) {
   //     socket.join(data.room);
   //     socket.broadcast.to(data.room).emit('new user joined');
   // });
-  socket.on('create-comment', function (data) {
-    io.emit('new comment', {
+
+  socket.on('create post', function (data) {
+    io.emit('post created', {
       message: data
     });
   });
-  socket.on('create post', function (data) {
-    io.emit('post created', {
+  socket.on('create-comment', function (data) {
+    io.emit('new comment', {
       message: data
     });
   });

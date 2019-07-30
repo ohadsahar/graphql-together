@@ -1,3 +1,4 @@
+import { FetchCommentsInterface } from './../../../shared/models/fetch-comments-by-id.model';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
@@ -17,18 +18,30 @@ export class PostsComponent implements OnInit {
   public showOrHideComments: any = {};
   public showOrHideSubComments: any = {};
   public isLoading: boolean;
-  currentPost: number;
   post = new PostClass(null, '', '', '');
   comment = new CommentClass(null, '', '', '');
   subcomment = new SubCommentClass(null, '', '', '');
+  fetchCommentData: FetchCommentsInterface;
+  fetchSubCommentData: FetchCommentsInterface;
   public posts: PostClass[] = [];
   public comments: any[] = [];
   public subcomments: SubCommentClass[] = [];
+  currentPostid: string;
+  currentCommentid: string;
+  currentPost: number;
+  limit: number;
+  skip: number;
+  limitSubComment: number;
+  skipSubComment: number;
 
   constructor(private postGraphQlService: PostGraphQlService, private spinnerService: Ng4LoadingSpinnerService,
-              private webSocketService: WebSocketService
+    private webSocketService: WebSocketService
   ) {
     this.isLoading = false;
+    this.skip = 0;
+    this.limit = 5;
+    this.limitSubComment = 5;
+    this.skipSubComment = 0;
   }
 
   ngOnInit() {
@@ -60,7 +73,7 @@ export class PostsComponent implements OnInit {
     this.isLoading = true;
     this.post.username = 'Ohad sahar';
     this.postGraphQlService.createPost(this.post).subscribe(response => {
-      const data = { post: this.post };
+      const data = { post: response.data.createPost };
       this.webSocketService.emit('create post', data);
       this.isLoading = false;
     });
@@ -96,18 +109,51 @@ export class PostsComponent implements OnInit {
   }
   showSubComments(commentid: string) {
     this.loading();
-    this.postGraphQlService.getSubCommentsByCommentId(commentid).subscribe(response => {
-      this.subcomments = response.data.getSubCommentsByCommentID;
+    this.currentCommentid = commentid;
+    this.fetchSubCommentData = { limit: this.limitSubComment, skip: this.skipSubComment, postid: commentid };
+    this.postGraphQlService.getSubCommentsByCommentId(this.fetchSubCommentData).subscribe(response => {
+      if (this.subcomments) {
+        this.subcomments = this.subcomments.concat(response.data.getSubCommentsByCommentID);
+      } else {
+        this.subcomments = response.data.getSubCommentsByCommentID;
+      }
       this.loaded();
     });
   }
   getCommentsByPostId(postid: string, i: number) {
     this.loading();
     this.currentPost = i;
-    this.postGraphQlService.getPostCommentsById(postid).subscribe(response => {
-      this.comments[this.currentPost] = response.data.getAllComentsByPostId;
+    this.currentPostid = postid;
+    this.fetchCommentData = { limit: this.limit, skip: this.skip, postid };
+    this.postGraphQlService.getPostCommentsById(this.fetchCommentData).subscribe(response => {
+      if (this.comments[this.currentPost]) {
+        this.comments[this.currentPost] = this.comments[this.currentPost].concat(response.data.getAllComentsByPostId);
+      } else {
+        this.comments[this.currentPost] = response.data.getAllComentsByPostId;
+      }
       this.loaded();
     });
+  }
+  updateSkipLimit() {
+    this.limit += 5;
+    this.skip += 5;
+    this.getCommentsByPostId(this.currentPostid, this.currentPost);
+  }
+  updateSkipLimitSubComments() {
+    this.limitSubComment += 5;
+    this.skipSubComment += 5;
+    this.showSubComments(this.currentCommentid);
+  }
+  resetComments() {
+    this.comments[this.currentPost] = [];
+    this.skip = 0;
+    this.limit = 5;
+  }
+
+  resetSubComments() {
+    this.subcomments = [];
+    this.limitSubComment = 5;
+    this.skipSubComment = 0;
   }
   loading() {
     this.isLoading = true;

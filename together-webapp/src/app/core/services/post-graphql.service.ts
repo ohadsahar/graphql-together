@@ -1,3 +1,4 @@
+import { FetchCommentsInterface } from './../../shared/models/fetch-comments-by-id.model';
 import { Apollo } from 'apollo-angular';
 import { Injectable } from '@angular/core';
 import { PostClass } from 'src/app/shared/models/post.model';
@@ -28,11 +29,11 @@ export class PostGraphQlService {
   getAllPost() {
     return this.apollo.watchQuery<any>({query: query.getAllPosts()}).valueChanges;
   }
-  getPostCommentsById(postid: string){
-    return this.apollo.watchQuery<any>({query: query.getAllComentsByPostId(postid)}).valueChanges;
+  getPostCommentsById(fetchComment: FetchCommentsInterface){
+    return this.apollo.watchQuery<any>({query: query.getAllComentsByPostId(fetchComment)}).valueChanges;
   }
-  getSubCommentsByCommentId(commentid: string) {
-    return this.apollo.watchQuery<any>({query: query.getSubCommentsByCommentID(commentid)}).valueChanges;
+  getSubCommentsByCommentId(fetchSubCommentData: FetchCommentsInterface) {
+    return this.apollo.watchQuery<any>({query: query.getSubCommentsByCommentID(fetchSubCommentData)}).valueChanges;
   }
 
 }

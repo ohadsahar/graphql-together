@@ -1,8 +1,6 @@
 <ng4-loading-spinner [threshold]="isLoading" [timeout]="99999" [loadingText]="'Please wait...'" [zIndex]="9999">
 </ng4-loading-spinner>
 <div class="posts-component">
-  <div class="row">
-    <div class="col-sm-12 col-md-12 col-lg-12">
       <section class="post-card">
         <mat-card class="post-create-card">
           <mat-card-header>
@@ -25,11 +23,7 @@
           </mat-card-content>
         </mat-card>
       </section>
-    </div>
-  </div>
   <section class="post-list">
-    <div class="row">
-      <div class="col-sm-12 col-md-12 col-lg-12">
         <h1>Post List</h1>
         <div *ngFor="let post of posts;let i = index">
           <mat-card class="comment-card">
@@ -50,7 +44,7 @@
                   <p *ngIf="!showOrHideComments[i]"
                     (click)="getCommentsByPostId(post?.id, i);showOrHideComments[i] = !showOrHideComments[i]">show
                     Comments</p>
-                  <p *ngIf="showOrHideComments[i]" (click)="showOrHideComments[i] = !showOrHideComments[i]">hide
+                  <p *ngIf="showOrHideComments[i]" (click)="showOrHideComments[i] = !showOrHideComments[i];resetComments()">hide
                     Comments</p>
                 </mat-action-row>
               </form>
@@ -74,31 +68,28 @@
                         <p (click)="createNewSubComment(comment.id)">comment</p>
                         <p *ngIf="!showOrHideSubComments[j]"
                           (click)="showSubComments(comment.id);showOrHideSubComments[j] = ! showOrHideSubComments[j]">
-                          show
-                          sub
-                          comments</p>
+                          show sub comments</p>
                         <p *ngIf="showOrHideSubComments[j]"
-                          (click)="showSubComments(comment.id);showOrHideSubComments[j] = ! showOrHideSubComments[j]">
-                          hide
-                          sub
-                          comments</p>
+                          (click)="showOrHideSubComments[j] = ! showOrHideSubComments[j];resetSubComments()">
+                          hide sub comments</p>
                       </mat-action-row>
                       <div class="subcomments-list" *ngIf="subcomments.length > 0 && showOrHideSubComments[j]">
                         <div *ngFor="let subcomment of subcomments">
                           {{subcomment?.subcommentdata}}
                         </div>
+                        <div *ngIf="subcomments.length >= limitSubComment" (click)="updateSkipLimitSubComments()">show more</div>
                       </div>
                       <div class="subcomments-list" *ngIf="subcomments.length <= 0 && showOrHideSubComments[j]">
                         No subcomments for this comment
                       </div>
                     </ng-template>
                   </mat-expansion-panel>
+                  <div *ngIf="comments[i]?.length >=limit" (click)="updateSkipLimit()">Show more</div>
                 </mat-accordion>
+
               </div>
             </mat-card-content>
           </mat-card>
         </div>
-      </div>
-    </div>
   </section>
 </div>

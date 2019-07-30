@@ -20,6 +20,7 @@ import { SubscriptionClient } from 'subscriptions-transport-ws';
 import { NewsComponent } from './core/components/news/news.component';
 import { HitsComponent } from './core/components/hits/hits.component';
 import { MenuComponent } from './core/components/menu/menu.component';
+import { MatTabsModule } from '@angular/material';
 
 @NgModule({
   declarations: [AppComponent, PostsComponent, NewsComponent, HitsComponent, MenuComponent],
@@ -32,6 +33,7 @@ import { MenuComponent } from './core/components/menu/menu.component';
     AngularMaterialModules,
     BrowserAnimationsModule,
     FormsModule,
+    MatTabsModule,
     Ng4LoadingSpinnerModule.forRoot()
   ],
   providers: [],

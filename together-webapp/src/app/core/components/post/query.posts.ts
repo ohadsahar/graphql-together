@@ -1,3 +1,4 @@
+import { FetchCommentsInterface } from './../../../shared/models/fetch-comments-by-id.model';
 import gql from 'graphql-tag';
 export function getAllPosts() {
   return gql`
@@ -11,10 +12,11 @@ export function getAllPosts() {
     }
   `;
 }
-export function getSubCommentsByCommentID(commentid: string) {
+export function getSubCommentsByCommentID(fetchSubCommentData: FetchCommentsInterface) {
   return gql`
     query {
-      getSubCommentsByCommentID(commentid: "${commentid}") {
+      getSubCommentsByCommentID(first:${fetchSubCommentData.limit},offset:${fetchSubCommentData.skip},
+      commentid: "${fetchSubCommentData.postid}") {
         id,
         commentid,
         username,
@@ -22,10 +24,10 @@ export function getSubCommentsByCommentID(commentid: string) {
       }
     }`;
 }
-export function getAllComentsByPostId(postid: string) {
+export function getAllComentsByPostId(fetchComment: FetchCommentsInterface) {
   return gql`
   query {
-    getAllComentsByPostId(postid:"${postid}") {
+    getAllComentsByPostId(first:${fetchComment.limit},offset:${fetchComment.skip}, postid:"${fetchComment.postid}") {
       id,
       postid,
       username,
@@ -33,3 +35,5 @@ export function getAllComentsByPostId(postid: string) {
     }
   }`;
 }
+
+
