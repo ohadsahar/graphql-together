@@ -1,5 +1,6 @@
 import * as subcommentsActions from '../actions/subcomment.action';
 
+
 export interface State {
   data: any;
   loading: boolean;
@@ -12,23 +13,24 @@ export const initialState: State = {
   loaded: false
 };
 
-export function getsubCommentReducer(state = initialState, action: subcommentsActions.Actions) {
+export function subcommentManagementReducer(state = initialState, action: subcommentsActions.Actions) {
+
   switch (action.type) {
-    case subcommentsActions.GET_ALL_SUBCOMMENTS:
+    case subcommentsActions.CREATE_SUBCOMMENT:
       return {
         ...state,
         loading: true,
         loaded: false,
         data: action.payload
       };
-    case subcommentsActions.GET_ALL_SUBCOMMENTS_SUCCESS:
+    case subcommentsActions.CREATE_SUBCOMMENT_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
         data: action.payload
       };
-    case subcommentsActions.GET_ALL_SUBCOMMENTS_FAILED:
+    case subcommentsActions.CREATE_SUBCOMMENT_FAILED:
       return {
         ...state,
         loading: false,
@@ -39,4 +41,4 @@ export function getsubCommentReducer(state = initialState, action: subcommentsAc
       return state;
   }
 }
-export const getSubCommentData = (state: State) => state;
+export const getSubcommentManagementReducerData = (state: State) => state;

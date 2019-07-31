@@ -174,13 +174,18 @@ export class PostsComponent implements OnInit, OnDestroy {
     this.loading();
     this.subcomment.commentid = commentid;
     this.subcomment.username = 'idan sagron';
-    this.postGraphQlService.createSubCommentOfComment(this.subcomment).subscribe(response => {
-      const data = { subcomment: response.data.createSubComment };
-      this.webSocketService.emit('create-sub-comment', data);
-      this.postGraphQlService.createSubCommentToCommentRelationship().subscribe(() => {
-        this.loaded();
+    this.store.dispatch(new subcommentActions.CreateSubcomment(this.subcomment));
+    const dataSubscribed = this.store.select(fromRoot.getSubCommentManagementData).pipe(takeUntil(this.ngbSubscribe$))
+      .subscribe((createdSubComment) => {
+        if (createdSubComment.loaded) {
+          const data = { subcomment: createdSubComment.data.data.createSubComment };
+          this.webSocketService.emit('create-sub-comment', data);
+          this.postGraphQlService.createSubCommentToCommentRelationship().subscribe(() => {
+            this.loaded();
+            dataSubscribed.unsubscribe();
+          });
+        }
       });
-    });
   }
   showSubComments(commentid: string) {
     this.loading();
