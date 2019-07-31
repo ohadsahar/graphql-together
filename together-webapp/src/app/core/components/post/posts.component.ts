@@ -8,10 +8,13 @@ import * as fromRoot from '../../../app.reducer';
 import { PostClass } from '../../../shared/models/post.model';
 import { SubCommentClass } from '../../../shared/models/subcomment.model';
 import * as postActions from '../../../store/actions/post.action';
+import * as commentActions from '../../../store/actions/comment.action';
+import * as subcommentActions from '../../../store/actions/subcomment.action';
 import { PostGraphQlService } from '../../services/post-graphql.service';
 import { CommentClass } from './../../../shared/models/comment.model';
 import { FetchCommentsInterface } from './../../../shared/models/fetch-comments-by-id.model';
 import { WebSocketService } from './../../services/web-socket.service';
+import { Subscription } from 'apollo-angular';
 @Component({
   selector: 'app-posts',
   templateUrl: './posts.component.html',
@@ -27,6 +30,7 @@ export class PostsComponent implements OnInit, OnDestroy {
   subcomment = new SubCommentClass(null, '', '', '');
   fetchCommentData: FetchCommentsInterface;
   fetchSubCommentData: FetchCommentsInterface;
+  getMoreComments: Subscription;
   public posts: PostClass[] = [];
   public comments: any[] = [];
   public subcomments: SubCommentClass[] = [];
@@ -120,23 +124,52 @@ export class PostsComponent implements OnInit, OnDestroy {
   }
   /* Posts section */
 
+  /* Comments section */
   createNewComment(form: NgForm, i: number, postid: string) {
     if (form.invalid) {
       return;
     }
+    this.loading();
     this.currentPost = i;
     this.isLoading = true;
     this.comment.postid = postid;
     this.comment.username = 'shalom hanoh';
     this.comment.commentdata = form.value.commentdata;
-    this.postGraphQlService.createCommentOfPost(this.comment).subscribe(response => {
-      const data = { comment: response.data.createComment };
-      this.webSocketService.emit('create-comment', data);
-      this.postGraphQlService.createRelationshipBetweenPostAndComments().subscribe(() => {
-        this.loaded();
+    this.store.dispatch(new commentActions.CreateComment(this.comment));
+    const dataSubscribed = this.store.select(fromRoot.getCommentManagementData).pipe(takeUntil(this.ngbSubscribe$))
+      .subscribe((createdCommentData) => {
+        if (createdCommentData.loaded) {
+          const data = { comment: createdCommentData.data.data.createComment };
+          this.webSocketService.emit('create-comment', data);
+          this.postGraphQlService.createRelationshipBetweenPostAndComments().subscribe(() => {
+            dataSubscribed.unsubscribe();
+            this.loaded();
+          });
+        }
       });
-    });
   }
+  getCommentsByPostId(postid: string, i: number) {
+    this.loading();
+    this.currentPost = i;
+    this.currentPostid = postid;
+    this.fetchCommentData = { limit: this.limit, skip: this.skip, postid };
+    this.store.dispatch(new commentActions.GetCommentsById(this.fetchCommentData));
+    const dataSubscribed = this.store.select(fromRoot.getCommentData).pipe(takeUntil(this.ngbSubscribe$))
+      .subscribe((commentsData) => {
+        if (commentsData.loaded) {
+          if (this.comments[this.currentPost]) {
+            this.comments[this.currentPost] = this.comments[this.currentPost].concat(commentsData.data.data.getAllComentsByPostId);
+          } else {
+            this.comments[this.currentPost] = commentsData.data.data.getAllComentsByPostId;
+          }
+          this.loaded();
+          dataSubscribed.unsubscribe();
+        }
+      });
+  }
+  /* Comments section */
+
+  /* SubComments section */
   createNewSubComment(commentid: string) {
     this.loading();
     this.subcomment.commentid = commentid;
@@ -153,30 +186,22 @@ export class PostsComponent implements OnInit, OnDestroy {
     this.loading();
     this.currentCommentid = commentid;
     this.fetchSubCommentData = { limit: this.limitSubComment, skip: this.skipSubComment, postid: commentid };
-    this.postGraphQlService.getSubCommentsByCommentId(this.fetchSubCommentData).subscribe(response => {
+    this.store.dispatch(new subcommentActions.GetAllSubcomments(this.fetchSubCommentData));
+    const dataSubscribed = this.store.select(fromRoot.getSubCommentData).pipe(takeUntil(this.ngbSubscribe$))
+      .subscribe((subCommentData) => {
+        if (subCommentData.loaded) {
+          if (this.subcomments) {
+            this.subcomments = this.subcomments.concat(subCommentData.data.data.getSubCommentsByCommentID);
+          } else {
+            this.subcomments = subCommentData.data.data.getSubCommentsByCommentID;
+          }
+          this.loaded();
+          dataSubscribed.unsubscribe();
+        }
+      });
+  }
+  /* SubComments section */
 
-      if (this.subcomments) {
-        this.subcomments = this.subcomments.concat(response.data.getSubCommentsByCommentID);
-      } else {
-        this.subcomments = response.data.getSubCommentsByCommentID;
-      }
-      this.loaded();
-    });
-  }
-  getCommentsByPostId(postid: string, i: number) {
-    this.loading();
-    this.currentPost = i;
-    this.currentPostid = postid;
-    this.fetchCommentData = { limit: this.limit, skip: this.skip, postid };
-    this.postGraphQlService.getPostCommentsById(this.fetchCommentData).subscribe(response => {
-      if (this.comments[this.currentPost]) {
-        this.comments[this.currentPost] = this.comments[this.currentPost].concat(response.data.getAllComentsByPostId);
-      } else {
-        this.comments[this.currentPost] = response.data.getAllComentsByPostId;
-      }
-      this.loaded();
-    });
-  }
   /* Paginator section */
   updateSkipLimit() {
     this.limit += 5;

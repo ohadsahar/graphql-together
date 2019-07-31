@@ -1,3 +1,4 @@
+import { CommentEffect } from './store/effects/comment.effect';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -19,6 +20,7 @@ import { StoreModule } from '@ngrx/store';
 import { Reducers } from './app.reducer';
 import { EffectsModule } from '@ngrx/effects';
 import { PostEffects } from './store/effects/post.effect';
+import { SubcommentEffects } from './store/effects/subcomment.effect';
 
 
 @NgModule({
@@ -32,7 +34,7 @@ import { PostEffects } from './store/effects/post.effect';
     AngularMaterialModules,
     BrowserAnimationsModule,
     StoreModule.forRoot(Reducers),
-    EffectsModule.forRoot([PostEffects]),
+    EffectsModule.forRoot([PostEffects, CommentEffect, SubcommentEffects]),
     Ng4LoadingSpinnerModule.forRoot()
   ],
   providers: [],
