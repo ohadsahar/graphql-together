@@ -1,20 +1,24 @@
-import { FetchCommentsInterface } from './../../../shared/models/fetch-comments-by-id.model';
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { Store } from '@ngrx/store';
 import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import * as fromRoot from '../../../app.reducer';
 import { PostClass } from '../../../shared/models/post.model';
 import { SubCommentClass } from '../../../shared/models/subcomment.model';
+import * as postActions from '../../../store/actions/post.action';
 import { PostGraphQlService } from '../../services/post-graphql.service';
 import { CommentClass } from './../../../shared/models/comment.model';
+import { FetchCommentsInterface } from './../../../shared/models/fetch-comments-by-id.model';
 import { WebSocketService } from './../../services/web-socket.service';
-
 @Component({
   selector: 'app-posts',
   templateUrl: './posts.component.html',
   styleUrls: ['./posts.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class PostsComponent implements OnInit {
+export class PostsComponent implements OnInit, OnDestroy {
   public showOrHideComments: any = {};
   public showOrHideSubComments: any = {};
   public isLoading: boolean;
@@ -34,8 +38,11 @@ export class PostsComponent implements OnInit {
   limitSubComment: number;
   skipSubComment: number;
 
+  ngbSubscribe$: Subject<void> = new Subject<void>();
+
+
   constructor(private postGraphQlService: PostGraphQlService, private spinnerService: Ng4LoadingSpinnerService,
-              private webSocketService: WebSocketService
+    private webSocketService: WebSocketService, private store: Store<fromRoot.State>
   ) {
     this.isLoading = false;
     this.skip = 0;
@@ -50,11 +57,15 @@ export class PostsComponent implements OnInit {
   }
   onLoadComponent() {
     this.loading();
-    this.spinnerService.show();
-    this.postGraphQlService.getAllPost().subscribe(response => {
-      this.posts = response.data.getAllPosts;
-      this.loaded();
-    });
+    this.store.dispatch(new postActions.GetAllPosts());
+    const dataSubscribed = this.store.select(fromRoot.getPostData).pipe(takeUntil(this.ngbSubscribe$))
+      .subscribe((postData) => {
+        if (postData.loaded) {
+          this.posts = postData.data.data.getAllPosts;
+          dataSubscribed.unsubscribe();
+          this.loaded();
+        }
+      });
   }
   startSocketing() {
     this.webSocketService.listen('post created').subscribe((postData) => {
@@ -72,15 +83,43 @@ export class PostsComponent implements OnInit {
       }
     });
   }
+  /* Posts section */
   createNewPost() {
-    this.isLoading = true;
-    this.post.username = 'Ohad sahar';
-    this.postGraphQlService.createPost(this.post).subscribe(response => {
-      const data = { post: response.data.createPost };
-      this.webSocketService.emit('create post', data);
-      this.isLoading = false;
-    });
+    this.loading();
+    this.store.dispatch(new postActions.CreatePost(this.post));
+    const dataSubscribed = this.store.select(fromRoot.getPostManagementData).pipe(takeUntil(this.ngbSubscribe$))
+      .subscribe((postCreatedData) => {
+        if (postCreatedData.loaded) {
+          const data = { post: postCreatedData.data.data.createPost };
+          this.webSocketService.emit('create post', data);
+          dataSubscribed.unsubscribe();
+          this.loaded();
+        }
+      });
   }
+  likePost(postData: PostClass, index: number, value: boolean) {
+    this.loading();
+    this.currentPost = index;
+    if (value) {
+      postData.likes += 1;
+    } else {
+      postData.likes -= 1;
+    }
+    this.loading();
+    this.store.dispatch(new postActions.UpdatePost(postData));
+    const dataSubscribed = this.store.select(fromRoot.getPostManagementData).pipe(takeUntil(this.ngbSubscribe$))
+      .subscribe((postUpdatedData) => {
+        if (postUpdatedData.loaded) {
+          const data = { post: postUpdatedData.data.data.updatePost };
+          this.webSocketService.emit('like-post', data);
+          this.posts[index] = data.post;
+          dataSubscribed.unsubscribe();
+          this.loaded();
+        }
+      });
+  }
+  /* Posts section */
+
   createNewComment(form: NgForm, i: number, postid: string) {
     if (form.invalid) {
       return;
@@ -138,6 +177,7 @@ export class PostsComponent implements OnInit {
       this.loaded();
     });
   }
+  /* Paginator section */
   updateSkipLimit() {
     this.limit += 5;
     this.skip += 5;
@@ -158,32 +198,12 @@ export class PostsComponent implements OnInit {
     this.limitSubComment = 5;
     this.skipSubComment = 0;
   }
+  /* Paginator section */
   changePanel(postid: string) {
     this.resetSubComments();
     this.showSubComments(postid);
   }
-  likePost(postData: PostClass, index: number) {
-    this.loading();
-    this.spinnerService.show();
-    this.currentPost = index;
-    postData.likes += 1;
-    this.postGraphQlService.updatePost(postData).subscribe(response => {
-      const data = { post: response.data.updatePost };
-      this.webSocketService.emit('like-post', data);
-      this.posts[index] = response.data.updatePost;
-    });
-  }
-  dissLikePost(postData: PostClass, index: number) {
-    this.loading();
-    this.spinnerService.show();
-    this.currentPost = index;
-    postData.likes -= 1;
-    this.postGraphQlService.updatePost(postData).subscribe(response => {
-      const data = { post: response.data.updatePost };
-      this.webSocketService.emit('like-post', data);
-      this.posts[index] = response.data.updatePost;
-    });
-  }
+  /* Loading section */
   loading() {
     this.isLoading = true;
     this.spinnerService.show();
@@ -191,5 +211,10 @@ export class PostsComponent implements OnInit {
   loaded() {
     this.isLoading = false;
     this.spinnerService.hide();
+  }
+  /* Loading section */
+  ngOnDestroy() {
+    this.ngbSubscribe$.complete();
+    this.ngbSubscribe$.unsubscribe();
   }
 }

@@ -48,8 +48,8 @@
                 Comments</button>
               <button type="button" mat-raised-button *ngIf="showOrHideComments[i]"
                 (click)="showOrHideComments[i] = !showOrHideComments[i];resetComments()">hide Comments</button>
-                <p>{{post?.likes}} <i class="far fa-thumbs-up" (click)="likePost(post, i)"></i> </p>
-                <i class="far fa-thumbs-down" (click)="dissLikePost(post, i)"></i>
+                <p>{{post?.likes}} <i class="far fa-thumbs-up" (click)="likePost(post, i, true)"></i> </p>
+                <i class="far fa-thumbs-down" (click)="likePost(post, i, false)"></i>
             </mat-action-row>
           </form>
           <section class="comment-list" *ngIf="showOrHideComments[i]">

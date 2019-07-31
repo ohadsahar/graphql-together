@@ -15,6 +15,10 @@ import { NewsComponent } from './core/components/news/news.component';
 import { HitsComponent } from './core/components/hits/hits.component';
 import { MenuComponent } from './core/components/menu/menu.component';
 import { ChatComponent } from './core/components/chat/chat.component';
+import { StoreModule } from '@ngrx/store';
+import { Reducers } from './app.reducer';
+import { EffectsModule } from '@ngrx/effects';
+import { PostEffects } from './store/effects/post.effect';
 
 
 @NgModule({
@@ -27,6 +31,8 @@ import { ChatComponent } from './core/components/chat/chat.component';
     HttpClientModule,
     AngularMaterialModules,
     BrowserAnimationsModule,
+    StoreModule.forRoot(Reducers),
+    EffectsModule.forRoot([PostEffects]),
     Ng4LoadingSpinnerModule.forRoot()
   ],
   providers: [],
