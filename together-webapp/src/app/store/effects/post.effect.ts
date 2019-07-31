@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { PostGraphQlService } from 'src/app/core/services/post-graphql.service';
 import { of } from 'rxjs';
 import * as postActions from '../actions/post.action';
-import { catchError, exhaustMap, map } from 'rxjs/operators';
+import { catchError, exhaustMap, map, switchMap } from 'rxjs/operators';
 
 
 @Injectable()
@@ -11,8 +11,8 @@ export class PostEffects {
   constructor(private actions$: Actions, private postGrpahQlService: PostGraphQlService) { }
   @Effect()
   public allPosts$ = this.actions$.pipe(ofType(postActions.GET_ALL_POSTS))
-    .pipe(exhaustMap(() => {
-      return this.postGrpahQlService.getAllPost()
+    .pipe(switchMap((action: postActions.GetAllPosts) => {
+      return this.postGrpahQlService.getAllPost(action.payload)
         .pipe(map(data => new postActions.GetAllPostsSuccess(data)),
           catchError(error => of(new postActions.GetAllPostsFailed(error)
           )));

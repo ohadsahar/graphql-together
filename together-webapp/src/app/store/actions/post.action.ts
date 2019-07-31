@@ -12,7 +12,7 @@ export const UPDATE_POST_FAILED = 'UPDATE_POST_FAILED';
 
 export class GetAllPosts implements Action {
   readonly type = GET_ALL_POSTS;
-  constructor() { }
+  constructor(public payload: any) { }
 }
 
 export class GetAllPostsSuccess implements Action {

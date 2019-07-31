@@ -20,6 +20,7 @@ export function postReducer(state = initialState, action: postActions.Actions) {
         ...state,
         loading: true,
         loaded: false,
+        data: action.payload
       };
     case postActions.GET_ALL_POSTS_SUCCESS:
       return {

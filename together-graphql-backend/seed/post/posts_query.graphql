@@ -1,4 +1,4 @@
 type Query {
 
-    getAllPosts: [Post]
+    getAllPosts(first: Int, offset: Int): [Post]
 }

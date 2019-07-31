@@ -41,6 +41,8 @@ export class PostsComponent implements OnInit, OnDestroy {
   skip: number;
   limitSubComment: number;
   skipSubComment: number;
+  limitPosts: number;
+  skipPosts: number;
 
   ngbSubscribe$: Subject<void> = new Subject<void>();
 
@@ -53,6 +55,8 @@ export class PostsComponent implements OnInit, OnDestroy {
     this.limit = 5;
     this.limitSubComment = 5;
     this.skipSubComment = 0;
+    this.limitPosts = 5;
+    this.skipPosts = 0;
   }
 
   ngOnInit() {
@@ -61,11 +65,16 @@ export class PostsComponent implements OnInit, OnDestroy {
   }
   onLoadComponent() {
     this.loading();
-    this.store.dispatch(new postActions.GetAllPosts());
+    const data = { limitPosts: this.limitPosts, skipPosts: this.skipPosts };
+    this.store.dispatch(new postActions.GetAllPosts(data));
     const dataSubscribed = this.store.select(fromRoot.getPostData).pipe(takeUntil(this.ngbSubscribe$))
       .subscribe((postData) => {
         if (postData.loaded) {
-          this.posts = postData.data.data.getAllPosts;
+          if (this.posts) {
+            this.posts = this.posts.concat(postData.data.data.getAllPosts);
+          } else {
+            this.posts = postData.data.data.getAllPosts;
+          }
           dataSubscribed.unsubscribe();
           this.loaded();
         }
@@ -218,6 +227,11 @@ export class PostsComponent implements OnInit, OnDestroy {
     this.skipSubComment += 5;
     this.showSubComments(this.currentCommentid);
   }
+  updatePostSkipLimit() {
+    this.limitPosts += 5;
+    this.skipPosts += 5;
+    this.onLoadComponent();
+  }
   resetComments() {
     this.comments[this.currentPost] = [];
     this.skip = 0;
@@ -228,6 +242,7 @@ export class PostsComponent implements OnInit, OnDestroy {
     this.limitSubComment = 5;
     this.skipSubComment = 0;
   }
+
   /* Paginator section */
   changePanel(postid: string) {
     this.resetSubComments();

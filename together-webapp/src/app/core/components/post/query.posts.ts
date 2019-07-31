@@ -1,9 +1,9 @@
 import { FetchCommentsInterface } from './../../../shared/models/fetch-comments-by-id.model';
 import gql from 'graphql-tag';
-export function getAllPosts() {
+export function getAllPosts(data: any) {
   return gql`
     query {
-      getAllPosts {
+      getAllPosts(first:${data.limitPosts}, offset: ${data.skipPosts}) {
         id
         username
         postitle

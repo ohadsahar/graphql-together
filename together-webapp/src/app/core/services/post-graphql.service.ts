@@ -29,8 +29,8 @@ export class PostGraphQlService {
   updatePost(postData: PostClass) {
     return this.apollo.mutate<any>({mutation: mutation.updatePost(postData)});
   }
-  getAllPost() {
-    return this.apollo.watchQuery<any>({query: query.getAllPosts()}).valueChanges;
+  getAllPost(data: any) {
+    return this.apollo.watchQuery<any>({query: query.getAllPosts(data)}).valueChanges;
   }
   getPostCommentsById(fetchComment: FetchCommentsInterface) {
     return this.apollo.watchQuery<any>({query: query.getAllComentsByPostId(fetchComment)}).valueChanges;
